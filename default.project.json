@@ -1,6 +1,6 @@
 {
     "name": "rng",
     "tree": {
-        "$path": "lib"
+        "$path": "lib.luau"
     }
 }

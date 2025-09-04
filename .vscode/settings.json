@@ -1,39 +1,28 @@
 {
-    // editor
     "editor.formatOnSave": true,
-
-    // schemas
-    "yaml.schemas": {
-        "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
-    },
-
-    // files
     "files.eol": "\n",
     "files.readonlyInclude": {
-        "luau_packages/**": true,
-        "pesde.lock": true,
-        ".pesde": true,
-        "dist": true,
+        "*_packages/**": true,
+        ".pesde/**": true,
+        "*.lock": true,
     },
     "files.exclude": {
-        ".vscode": false,
-        ".github": false,
-        ".pesde": false,
-        "pesde.lock": false,
-        "sourcemap.json": false,
-        "luau_packages": false,
-        "scripts": false,
-        "dist": false,
-        ".gitattributes": false,
-        ".gitignore": false,
-        ".luaurc": false,
-        "stylua.toml": false,
-        "pesde.toml": false,
-        "*.lock.toml": false
+        ".gitattributes": true,
+        ".gitignore": true,
+        ".luaurc": true,
+        ".vscode": true,
+        ".github": true,
+        ".pesde": true,
+        "*.lock": true,
+        "*.lock.*": true,
+        "*_packages": true,
+        "sourcemap.json": true,
+        "stylua.toml": true,
+        "wally.toml": true,
+        "rokit.toml": true,
+        "pesde.toml": true
     },
-
-    // luau lsp
-    "stylua.targetReleaseVersion": "latest",
+    "stylua.targetReleaseVersion": "2.1.0",
     "luau-lsp.platform.type": "standard",
     "luau-lsp.bytecode.vectorCtor": "create",
     "luau-lsp.bytecode.vectorLib": "vector",
@@ -43,7 +32,7 @@
     "luau-lsp.fflags.enableNewSolver": false,
     "luau-lsp.diagnostics.workspace": true,
     "luau-lsp.ignoreGlobs": [
-        "lune_packages/**",
+        "*_packages/**",
         "**/.pesde/**",
         "dist/**"
     ],
