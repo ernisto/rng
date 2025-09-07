@@ -75,6 +75,15 @@ rng.buffer(512, out, 128)
 
 ## API
 
+- `rng.new_segure(seed: string | any?): @lib`
+  - Returns a **C**ryptographically **S**ecure **P**seudo **R**andom **N**umber **G**enerator based on ChaCha20
+
+- `rng.new(seed: string | any?): @lib`
+  - Returns a **P**seudo **R**andom **N**umber **G**enerator based on Shoroshiro128
+
+- `rng.custom(generator: () -> 1..0): @lib`
+  - Returns the this same lib, but using a given generator
+
 - `rng.number(): number` — range \[0, 1]
 - `rng.number(max: number): number` — range \[0, max]
 - `rng.number(min: number, max: number): number` — range \[min, max]
@@ -115,9 +124,6 @@ rng.buffer(512, out, 128)
 
 - `rng.buffer(count: number, target?: buffer, offset?: number): buffer`
   - Fills a buffer with random 32-bit unsigned integers; creates one if not provided.
-
-- `rng.cryptographically_secure(seed: buffer?): () -> 0..1`
-  - Returns a **C**ryptographically **S**ecure **P**seudo **R**andom **N**umber **G**enerator based on ChaCha20
 
 ## Notes
 
