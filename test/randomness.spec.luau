@@ -1,9 +1,9 @@
 -- run tests on terminal `pesde x ernisto/test`
 
-local rng = require('../lib/csprng')()
+local rng = require('../lib').new_secure().number
 
 local run = {}
-local N = 2 ^ 16
+local N = 2 ^ 20
 
 function run.uniform_frequency()
 	local sum = 0

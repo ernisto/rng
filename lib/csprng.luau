@@ -1,3 +1,7 @@
+local hash = require('./hash')
+local helper = require('./helper')
+
+-- defs
 local U32_CAP = 2 ^ 32 - 1
 type u32 = number
 type ratio = number -- ranging 0.00 to 1.00
@@ -46,16 +50,12 @@ end
 
 -- module
 type chacha_block = { u32 } -- 16 elements
-local function generator(seed: buffer?, salt: buffer?): () -> ratio
+local function generator(seed: hash.seed?, salt: buffer?)
 	local state: chacha_block = table.create(16, 0)
 	state[1], state[2], state[3], state[4] = unpack(bytes_to_u32(string.byte('expand 32-byte k', 0, 16)))
 
 	-- key: 32 bytes
-	local _seed = seed or buffer.fromstring(tostring(os.clock() * 1e9) .. tostring({}))
-	for i = 1, 8 do
-		state[4 + i] = buffer.readu32(_seed, (i - 1) * 4)
-	end
-
+	state[5], state[6], state[7], state[8], state[9], state[10], state[11], state[12] = hash(seed, 8)
 	state[13] = 0 -- counter: 4 bytes
 
 	-- nonce: 12 bytes
@@ -76,11 +76,13 @@ local function generator(seed: buffer?, salt: buffer?): () -> ratio
 		state[13] += 1
 	end
 
-	return function(): u32
+	local function next(): ratio
 		if cursor >= 16 then refill_block() end
 		cursor += 1
-		return block[cursor] / U32_CAP % 1
+		return math.ldexp(block[cursor], -32) % 1
 	end
+
+	return helper(next)
 end
 
 return generator
