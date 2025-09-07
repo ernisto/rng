@@ -18,7 +18,7 @@ end
 local function buff(count: number, target: buffer?, offset: number?): buffer
 	local output = target or buffer.create(count)
 	local init = offset or 0
-	for cursor = init, init + count do
+	for cursor = init, init + count - 4, 4 do
 		buffer.writeu32(output, cursor, number(2 ^ 32 - 1))
 	end
 	return output
@@ -44,14 +44,29 @@ local function binary_search(arr: { number }, value: number): number
 	return init
 end
 local function rarest_keys<K>(key_weights: { [K]: weight }): { K }
-	local rarest = {}
-	local weights = {}
+	local rarest_weights = {}
+	local rarest_keys = {}
 	for key, weight in key_weights do
-		local index = binary_search(weights, weight)
-		table.insert(rarest, index, key)
-		table.insert(weights, index, weight)
+		local index = binary_search(rarest_weights, weight)
+		table.insert(rarest_keys, index, key)
+		table.insert(rarest_weights, index, weight)
 	end
-	return rarest
+	return rarest_keys
+end
+local function deterministic<K>(key_weights: { [K]: weight }): { [K]: weight }
+	local ordered_keys = rarest_keys(key_weights)
+
+	local function iter(): () -> (K?, weight?)
+		local index = 0
+		return function()
+			index += 1
+			local key = ordered_keys[index]
+			local weight = key and key_weights[key]
+			return key, weight
+		end
+	end
+
+	return setmetatable(key_weights, { __iter = iter }) :: any
 end
 local function key_by_weight<K>(key_weights: { [K]: weight }): K
 	local total_weight = 0
@@ -61,9 +76,10 @@ local function key_by_weight<K>(key_weights: { [K]: weight }): K
 
 	local n = number(total_weight)
 	for key, weight in key_weights do
-		if weight <= n then return key end
+		if n <= weight then return key end
 		n -= weight
 	end
+	if next(key_weights) then print(`couldnt possible match a key to {n}. fallback to any key, pls send me a repro`) end
 	return next(key_weights) or error(`no keys provided`)
 end
 local function write_shuffle<T>(mut_arr: { T }): { T }
@@ -74,7 +90,14 @@ local function write_shuffle<T>(mut_arr: { T }): { T }
 	return mut_arr
 end
 local function value<T>(arr: { T }): T
-	return arr[number(#arr) // 1]
+	return arr[number(1, #arr) // 1]
+end
+local function key<K, V>(map: { [K]: V }): K
+	local keys = {}
+	for key in map do
+		table.insert(keys, key)
+	end
+	return value(keys)
 end
 
 -- module
@@ -87,8 +110,10 @@ return table.freeze {
 	skip = skip,
 
 	-- table
+	deterministic = deterministic,
 	write_shuffle = write_shuffle,
 	key_by_weight = key_by_weight,
 	rarest_keys = rarest_keys,
 	value = value,
+	key = key,
 }

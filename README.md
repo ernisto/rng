@@ -1,6 +1,6 @@
 # rng
 
-Simple, fast RNG utilities for Luau/Roblox: numbers, booleans by probability, weighted choice, array helpers, vectors, and buffers.
+Simple, fast RNG utilities for Luau: numbers, booleans by probability, weighted choice, array helpers, vectors, and buffers.
 
 ## Installation
 
@@ -24,7 +24,7 @@ local rng = require(ReplicatedStorage.Packages.rng)
 
 ### Weighted choice
 ```lua
-local rarity = rng.key_by_weight({
+local rarity = rng.key_by_weight(rng.deterministic {
     common = 75,     -- 75/150 → 50.0%
     uncommon = 50,   -- 50/150 → 33.3%
     rare = 20,       -- 20/150 → 13.3%
@@ -45,8 +45,11 @@ local s = rng.number(0, 1, 0.25)       -- one of {0.00, 0.25, 0.50, 0.75, 1.00}
 ### Booleans by probability
 ```lua
 if rng.truth(0.2) then
-    print("20% chance")
+    print("1/5 = 20% chance")
 end
+
+if rng.skip(1/3) then return end
+print("1/3 = 33% chance")
 ```
 
 ### Vectors (Luau `vector` 3D type)
@@ -57,8 +60,9 @@ local v = rng.vector(vector.create(0, 0, 0), vector.create(100, 50, 100))
 ### Arrays
 ```lua
 local items = {"a", "b", "c", "d"}
-rng.write_shuffle(items)         -- shuffles in place
-local pick = rng.value(items)    -- random element
+local pick = rng.value(items)   -- random element
+local index = rng.key(items)    -- random index
+rng.write_shuffle(items)        -- shuffles in place
 ```
 
 ### Buffers
@@ -82,16 +86,32 @@ rng.buffer(512, out, 128)
 - `rng.vector(min: vector, max: vector, step: vector): vector` — component-wise stepped values
 
 - `rng.truth(ratio: number): boolean`
+- `rng.pass(ratio: number): boolean`
   - Returns true with probability `ratio` (e.g. 0.25 → 25% → 1/4).
+
+- `rng.skip(ratio: number): boolean`
+  - Returns false with probability `ratio` (e.g. 0.25 → 25% → 1/4).
 
 - `rng.key_by_weight(weights: { [K]: number }): K`
   - Returns a key chosen by its weight (weights can be any positive decimal numbers).
+
+- `rng.rarest_keys(weights: { [K]: number }): { K }`
+  - Returns a array of keys ordered by weight
+
+- `rng.deterministic(weights: { [K]: number }): { [K]: number }`
+  - Returns the given weight map with a `__iter` metamethod, keeping the iteration order
+    of this same table in anothers machines. Making `rng.key_by_weight` more deterministic,
+    regenerative markets with same seed of all servers would be more consistent even using table as key.
+    The consistency is taken when keys between 2 machines have different weight.
 
 - `rng.write_shuffle<T>(mut_arr: { T }): { T }`
   - In-place array shuffle. Returns the same array for convenience.
 
 - `rng.value<T>(arr: { T }): T`
   - Random element from an array.
+
+- `rng.key<K>(arr: { [K]: _ }): K`
+  - Random key from an table.
 
 - `rng.buffer(count: number, target?: buffer, offset?: number): buffer`
   - Fills a buffer with random 32-bit unsigned integers; creates one if not provided.
