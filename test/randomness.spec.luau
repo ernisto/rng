@@ -1,9 +1,9 @@
--- run tests with `pesde x ernisto/test`
+-- run tests on terminal `pesde x ernisto/test`
 
-local rng = require('../lib').number
+local rng = require('../lib/csprng')()
 
 local run = {}
-local N = 100000
+local N = 2 ^ 16
 
 function run.uniform_frequency()
 	local sum = 0
@@ -33,6 +33,7 @@ function run.no_absurd_sequences()
 	end
 	assert(higher_sequence_length < absurd_sequence_length, `Got so high sequence of 1/2: {higher_sequence_length}`)
 end
+
 function run.low_auto_correlation()
 	local seq = {}
 	for i = 1, N do

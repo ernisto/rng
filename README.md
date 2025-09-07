@@ -116,6 +116,9 @@ rng.buffer(512, out, 128)
 - `rng.buffer(count: number, target?: buffer, offset?: number): buffer`
   - Fills a buffer with random 32-bit unsigned integers; creates one if not provided.
 
+- `rng.cryptographically_secure(seed: buffer?): () -> 0..1`
+  - Returns a **C**ryptographically **S**ecure **P**seudo **R**andom **N**umber **G**enerator based on ChaCha20
+
 ## Notes
 
 - See `test/randomness.spec.luau` for statistical sanity checks used during development.

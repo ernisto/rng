@@ -1,3 +1,4 @@
+local csprng = require('@self/csprng')
 type ratio = number -- a number ranging 0.00 to 1.00
 
 -- primitive
@@ -116,4 +117,7 @@ return table.freeze {
 	rarest_keys = rarest_keys,
 	value = value,
 	key = key,
+
+	-- misc
+	cryptographically_secure = csprng,
 }
