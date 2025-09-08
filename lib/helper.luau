@@ -1,17 +1,24 @@
 type ratio = number -- a number ranging 0.00 to 1.00
 return function(rng: () -> ratio)
-	local function number(min: number?, max: number?, step: number?): number
-		return if step
-			then math.lerp(min :: number, max :: number, rng()) // step * step
-			elseif max then math.lerp(min :: number, max, rng())
-			elseif min then rng() * min
-			else rng()
+	local function number(max: number?): number
+		return if max then rng() * max else rng()
 	end
-	local function vect(min: vector?, max: vector?, step: vector?): vector
+	local function number_step(max: number?, step: number?): number
+		return if step then (max :: number) * rng() // step * step elseif max then rng() * max else rng()
+	end
+	local function number_range(min: number, max: number, step: number?): number
+		return if step then math.lerp(min, max, rng()) // step * step else math.lerp(min, max, rng())
+	end
+	local function vect(x: number?, y: number?, z: number?, step: number?): vector
+		return if y
+			then vector.create(number_step(x, step), number_step(y, step), z and number_step(z, step) or 0)
+			else vector.create(number_step(x), number_step(x), number_step(x))
+	end
+	local function vect_range(min: vector, max: vector, step: vector?): vector
 		return vector.create(
-			number(min and min.x, max and max.x, step and step.x),
-			number(min and min.y, max and max.y, step and step.y),
-			number(min and min.z, max and max.z, step and step.z)
+			number_range(min and min.x, max and max.x, step and step.x),
+			number_range(min and min.y, max and max.y, step and step.y),
+			number_range(min and min.z, max and max.z, step and step.z)
 		)
 	end
 	local function buff(count: number, target: buffer?, offset: number?): buffer
@@ -49,13 +56,13 @@ return function(rng: () -> ratio)
 	end
 	local function write_shuffle<T>(mut_arr: { T }): { T }
 		for index, value in mut_arr do
-			local index2 = number(1, #mut_arr) // 1
+			local index2 = number_range(1, #mut_arr) // 1
 			mut_arr[index], mut_arr[index2] = mut_arr[index2], mut_arr[index]
 		end
 		return mut_arr
 	end
 	local function value<T>(arr: { T }): T
-		return arr[number(1, #arr) // 1]
+		return arr[number_range(1, #arr) // 1]
 	end
 	local function key<K, V>(map: { [K]: V }): K
 		local keys = {}
@@ -67,8 +74,11 @@ return function(rng: () -> ratio)
 
 	-- module
 	return table.freeze {
-		number = number :: ((max: number?) -> number) & (min: number, max: number, step: number?) -> number,
-		vector = vect :: ((max: vector?) -> vector) & (min: vector, max: vector, step: vector?) -> vector,
+		number = number,
+		step = number_step,
+		range = number_range,
+		vector = vect :: ((max: number?) -> vector) & (x: number, y: number, z: number?, step: number?) -> vector,
+		vector_range = vect_range,
 		buffer = buff,
 		truth = truth,
 		pass = truth,

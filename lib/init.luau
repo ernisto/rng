@@ -52,8 +52,12 @@ return table.freeze {
 	rarest_keys = rarest_keys,
 
 	-- primitive
-	number = std.number,
+	vector_range = std.vector_range,
 	vector = std.vector,
+	number = std.number,
+	range = std.range,
+	step = std.step,
+
 	buffer = std.buffer,
 	truth = std.truth,
 	pass = std.truth,

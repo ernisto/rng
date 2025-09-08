@@ -8,14 +8,14 @@ local N = 2 ^ 16
 -- number()
 function run.should_return_number_in_range()
 	for i = 1, N do
-		local n = rng.number(1, 10)
+		local n = rng.range(1, 10)
 		assert(n >= 1 and n <= 10)
 	end
 end
 
 function run.should_return_number_with_step()
 	for i = 1, N do
-		local n = rng.number(0, 10, 2)
+		local n = rng.range(0, 10, 2)
 		assert(n % 2 == 0)
 	end
 end
@@ -23,7 +23,7 @@ end
 -- vect()
 function run.should_return_vector_in_range()
 	for i = 1, N do
-		local v = rng.vector(vector.create(0, 0, 0), vector.create(5, 5, 5))
+		local v = rng.vector_range(vector.create(0, 0, 0), vector.create(5, 5, 5))
 		assert(0 <= v.x and v.x <= 5)
 		assert(0 <= v.y and v.y <= 5)
 		assert(0 <= v.z and v.z <= 5)
