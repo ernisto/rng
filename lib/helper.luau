@@ -31,42 +31,6 @@ return function(rng: () -> ratio)
 
 	-- table
 	type weight = number -- any number
-	local function binary_search(arr: { number }, value: number): number
-		local range = #arr
-		local init = 1
-		while range > 0 do
-			range //= 2
-			local mid = init + range
-			local mid_value = arr[mid]
-			init = if mid_value == nil then mid elseif value < mid_value then init else mid + 1
-		end
-		return init
-	end
-	local function rarest_keys<K>(key_weights: { [K]: weight }): { K }
-		local rarest_weights = {}
-		local rarest_keys = {}
-		for key, weight in key_weights do
-			local index = binary_search(rarest_weights, weight)
-			table.insert(rarest_keys, index, key)
-			table.insert(rarest_weights, index, weight)
-		end
-		return rarest_keys
-	end
-	local function deterministic<K>(key_weights: { [K]: weight }): { [K]: weight }
-		local ordered_keys = rarest_keys(key_weights)
-
-		local function iter(): () -> (K?, weight?)
-			local index = 0
-			return function()
-				index += 1
-				local key = ordered_keys[index]
-				local weight = key and key_weights[key]
-				return key, weight
-			end
-		end
-
-		return setmetatable(key_weights, { __iter = iter }) :: any
-	end
 	local function key_by_weight<K>(key_weights: { [K]: weight }): K
 		local total_weight = 0
 		for _, weight in key_weights do
@@ -111,10 +75,8 @@ return function(rng: () -> ratio)
 		skip = skip,
 
 		-- table
-		deterministic = deterministic,
 		write_shuffle = write_shuffle,
 		key_by_weight = key_by_weight,
-		rarest_keys = rarest_keys,
 		value = value,
 		key = key,
 	}
