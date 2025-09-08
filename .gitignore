@@ -1,9 +1,6 @@
-# pesde
-*_packages
+# locally generated
+dist
 .pesde
 
-# local secrets
-.env
-
-# rojo generated
-sourcemap.json
+# packages
+luau_packages
