@@ -1,6 +1,7 @@
 # rng
 
 Simple, fast RNG utilities for Luau: numbers, booleans by probability, weighted choice, array helpers, vectors, and buffers.
+[![Release](https://github.com/ernisto/rng/actions/workflows/release.yml/badge.svg)](https://github.com/ernisto/rng/actions/workflows/release.yml)
 
 ## Installation
 
