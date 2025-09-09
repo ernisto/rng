@@ -21,6 +21,20 @@ return function(rng: () -> ratio)
 			number_range(min and min.z, max and max.z, step and step.z)
 		)
 	end
+
+	local function direction(): vector -- TODO: (reference: vector, max_dot: vector)
+		local phi = number(math.pi * 2)
+		local costheta = number_range(-1, 1)
+		local theta = math.acos(costheta)
+	
+		--stylua: ignore
+		return vector.create(
+			math.sin(theta) * math.cos(phi),
+			math.sin(theta) * math.sin(phi),
+			math.cos(theta)
+		)
+	end
+
 	local function buff(count: number, target: buffer?, offset: number?): buffer
 		local output = target or buffer.create(count)
 		local init = offset or 0
@@ -79,6 +93,7 @@ return function(rng: () -> ratio)
 		range = number_range,
 		vector = vect :: ((max: number?) -> vector) & (x: number, y: number, z: number?, step: number?) -> vector,
 		vector_range = vect_range,
+		direction = direction,
 		buffer = buff,
 		truth = truth,
 		pass = truth,

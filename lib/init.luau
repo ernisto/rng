@@ -53,6 +53,7 @@ return table.freeze {
 
 	-- primitive
 	vector_range = std.vector_range,
+	direction = std.direction,
 	vector = std.vector,
 	number = std.number,
 	range = std.range,

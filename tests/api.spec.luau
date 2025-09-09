@@ -30,6 +30,16 @@ function run.should_return_vector_in_range()
 	end
 end
 
+function run.should_generate_uniform_distribuited_directions()
+	local sum = 0
+	for i = 1, N do
+		local v = rng.direction()
+		sum += v.x + v.y + v.z
+	end
+	local mean = sum / N
+	assert(math.abs(mean) < 0.01, `Expected mean of ~0.5 (0.01 threshold), got {mean}`)
+end
+
 -- buff()
 function run.should_return_buffer_with_count()
 	local b = rng.buffer(8)
