@@ -19,7 +19,11 @@ jobs:
         uses: CompeyDev/setup-rokit@v0.1.2
         with:
           token: ${{ github.token }}
-  
+
+      - run: wally login --token $env:WALLY_TOKEN
+        env:
+          WALLY_TOKEN: ${{ secrets.WALLY_TOKEN }}
+
       - name: Publish wally
         run: wally publish
 
