@@ -22,7 +22,7 @@ jobs:
       - name: Check Format
         uses: JohnnyMorganz/stylua-action@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           version: 2.1.0
           args: --config-path stylua.toml --check lib tests
 
@@ -32,15 +32,10 @@ jobs:
       - name: Checkout your git repo
         uses: actions/checkout@v2
 
-      - name: Setup pesde
-        uses: ernisto/setup-pesde@main  # temp until my pr get merged
+      - name: Setup rokit
+        uses: CompeyDev/setup-rokit
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          cache: true
-
-      - name: Install packages
-        run: pesde install
-        timeout-minutes: 1
+          token: ${{ github.token }}
 
       - name: Lint
         run: >
@@ -56,10 +51,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Pesde Tools
-        uses: ernisto/setup-pesde@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          cache: true
+        uses: axiom-co/setup-pesde@b690699ace34169731b6b2a1c93b2008472038a7
 
       - name: Run tests
-        run: lune run tests/run
+        run: pesde x ernisto/test

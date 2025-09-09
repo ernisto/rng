@@ -1,10 +1,6 @@
 name: Release
 on:
-  workflow_dispatch:
-  # push:
-  #   branches: [master, dev]
-  # pull_request:
-  #   branches: [master, dev]
+  release:
 
 jobs:
   check:
@@ -22,13 +18,25 @@ jobs:
       - name: Checkout git files
         uses: actions/checkout@v2
 
-      - name: Setup pesde
-        uses: ernisto/setup-pesde@main
+      - name: Setup rokit
+        uses: CompeyDev/setup-rokit
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          cache: true
+          token: ${{ github.token }}
+  
+      - name: Publish wally
+        run: wally publish
 
-      - run: chmod +x ./scripts/release-build.sh
-      - name: Build demo game
-        timeout-minutes: 1
-        run: ./scripts/release-build.sh demo
+      - name: Setup pesde
+        uses: axiom-co/setup-pesde@b690699ace34169731b6b2a1c93b2008472038a7
+        with:
+          token: ${{ github.token }}
+
+      - name: Publish pesde
+        run: pesde publish -y
+
+      - name: Release rbxm
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rojo build default.project.json -o rng.rbxm
+          gh release upload ${{github.event.release.tag_name}} rng.rbxm
