@@ -6,7 +6,7 @@ Simple, fast RNG utilities for Luau: numbers, booleans by probability, weighted 
 
 - Wally (`wally.toml`): add under `[dependencies]`
 ```toml
-rng = "ernisto/rng@0.3.0"
+rng = "ernisto/rng@0.3.0-rc.1"
 ```
 
 - Pesde (terminal):
@@ -21,25 +21,71 @@ Require it from your `Packages` (adjust the path to match your setup):
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local rng = require(ReplicatedStorage.Packages.rng)
 ```
-
-### Weighted choice
+You can also use this module in pure luau environment 💪
 ```lua
-local rarity = rng.key_by_weight(rng.deterministic {
-    common = 75,     -- 75/150 → 50.0%
-    uncommon = 50,   -- 50/150 → 33.3%
-    rare = 20,       -- 20/150 → 13.3%
-    epic = 4,        --  4/150 →  2.6%
-    legendary = 1,   --  1/150 →  0.6%
-})
-print("loot rarity:", rarity)
+local rng = require('@pkg/rng')
+```
+
+### Regular RNG usage
+```lua
+local function teleport(humanoid: Humanoid, cframe: CFrame)
+  humanoid.RootPart.CFrame = cframe * CFrame.new(rng.vector(10, 0, 10))
+end
+
+```lua
+local skill_weights = {
+  fire = 5,
+  water = 5,
+  earth = 5,
+  lava = 3,
+  light = 1,
+  dark = 1,
+}
+local function spin_skill()
+  return rng.key_from_weight(skill_weights)
+end
+```
+
+### Secure daily market
+```lua
+local RESET_INTERVAL = 1*24*60*60
+
+-- rng.deterministic_iter_order to keep iteration order the same for all servers
+local items = rng.deterministic_iter_order {
+    -- total weight  → 150 → (75 + 50 + 20 + 4 + 1)
+    apple = 75,  -- 75/150 → 50.0%
+    soup = 50,   -- 50/150 → 33.3%
+    sword = 20,  -- 20/150 → 13.3%
+    armor = 4,   --  4/150 →  2.6%
+    totem = 1,   --  1/150 →  0.6%
+}
+
+-- csprng are extremely hard to predict seeing outputs or brute forcing
+local csprng = rng.new_secure(HttpService:GetSecret("MarketRandomSeed"))
+
+-- advance state as the same as another living servers
+for i = 0, os.time() - RESET_INTERVAL, RESET_INTERVAL do
+  for i = 1, 3 do csprng.number() end
+end
+
+-- generate current market
+while true do
+  local items = {}
+  for i = 1, 3 do
+    items[i] = csprng.key_by_weight(items)
+  end
+  market.set_items(items)
+  task.wait(os.time() % RESET_INTERVAL)
+end
 ```
 
 ### Numbers
 ```lua
 local x = rng.number()                 -- [0, 1]
 local y = rng.number(10)               -- [0, 10]
-local z = rng.number(5, 15)            -- [5, 15]
-local s = rng.number(0, 1, 0.25)       -- one of {0.00, 0.25, 0.50, 0.75, 1.00}
+local w = rng.step(10, 2)              -- [0, 2, 4, 6, 8, 10]
+local z = rng.range(5, 15)             -- [5, 15]
+local s = rng.range(0, 1, 0.25)        -- one of {0.00, 0.25, 0.50, 0.75, 1.00}
 ```
 
 ### Booleans by probability
@@ -48,20 +94,21 @@ if rng.truth(0.2) then
     print("1/5 = 20% chance")
 end
 
-if rng.skip(1/3) then return end
+if rng.skip(1/3) then return end  -- 2/3 chance to return
 print("1/3 = 33% chance")
 ```
 
 ### Vectors (Luau `vector` 3D type)
 ```lua
-local v = rng.vector(vector.create(0, 0, 0), vector.create(100, 50, 100))
+local v1 = rng.vector(100, 50, 100) -- x = [0, 100], y = [0, 50], z = [0, 100]
+local v2 = rng.vector_range(vector.create(-10, 0, -20), vector.create(10, 0, 20), 5)
 ```
 
 ### Arrays
 ```lua
 local items = {"a", "b", "c", "d"}
-local pick = rng.value(items)   -- random element
-local index = rng.key(items)    -- random index
+local pick = rng.value(items)   -- 'a' | 'b' | 'c' | 'd'
+local index = rng.key{ a = 'cavalo', b = 'chama' }    -- 'a' | 'b'
 rng.write_shuffle(items)        -- shuffles in place
 ```
 
@@ -75,55 +122,56 @@ rng.buffer(512, out, 128)
 
 ## API
 
-- `rng.new_segure(seed: string | any?): @lib`
+- `rng.new_secure(seed: string | any?): helper`
   - Returns a **C**ryptographically **S**ecure **P**seudo **R**andom **N**umber **G**enerator based on ChaCha20
 
-- `rng.new(seed: string | any?): @lib`
+- `rng.new(seed: string | any?): helper`
   - Returns a **P**seudo **R**andom **N**umber **G**enerator based on Shoroshiro128
 
-- `rng.custom(generator: () -> 1..0): @lib`
+- `rng.custom(generator: () -> 1..0): helper`
   - Returns the this same lib, but using a given generator
-
-- `rng.number(): number` — range \[0, 1]
-- `rng.number(max: number): number` — range \[0, max]
-- `rng.number(min: number, max: number): number` — range \[min, max]
-- `rng.number(min: number, max: number, step: number): number` — \[min, max] snapped to `step`
-
-- `rng.vector(): vector` — each component in \[0, 1]
-- `rng.vector(max: vector): vector` — each component in \[0, max]
-- `rng.vector(min: vector, max: vector): vector` — component-wise \[min, max]
-- `rng.vector(min: vector, max: vector, step: vector): vector` — component-wise stepped values
-
-- `rng.truth(ratio: number): boolean`
-- `rng.pass(ratio: number): boolean`
-  - Returns true with probability `ratio` (e.g. 0.25 → 25% → 1/4).
-
-- `rng.skip(ratio: number): boolean`
-  - Returns false with probability `ratio` (e.g. 0.25 → 25% → 1/4).
-
-- `rng.key_by_weight(weights: { [K]: number }): K`
-  - Returns a key chosen by its weight (weights can be any positive decimal numbers).
 
 - `rng.rarest_keys(weights: { [K]: number }): { K }`
   - Returns a array of keys ordered by weight
 
-- `rng.deterministic(weights: { [K]: number }): { [K]: number }`
-  - Returns the given weight map with a `__iter` metamethod, keeping the iteration order
-    of this same table in anothers machines. Making `rng.key_by_weight` more deterministic,
-    regenerative markets with same seed of all servers would be more consistent even using table as key.
-    The consistency is taken when keys between 2 machines have different weight.
+- `rng.same_iter_order(weights: { [K]: number }): { [K]: number }`
+  - Returns the given weight map with a `__iter` metamethod, keeping the iteration
+    order of tables with similar weights. Changing lowest weights is more probably
+    to break the iteration order, since lower weights is located first on array 
 
-- `rng.write_shuffle<T>(mut_arr: { T }): { T }`
+- `helper.number(): number` — range \[0, 1]
+- `helper.number(max: number): number` — range \[0, max]
+- `helper.step(max: number, step: number): number` — range \[0, 0 + step, 0 + 2*step, max]
+- `helper.range(min: number, max: number): number` — range \[min, max]
+- `helper.range(min: number, max: number, step: number): number` — \[min, max] snapped to `step`
+
+- `helper.vector(): vector` — each component in \[0, 1]
+- `helper.vector(max: number): vector` — each component in \[0, max]
+- `helper.vector(x: number, y: number, z: number?): vector` — x = \[0, x], y = \[0, y], z = \[0, z]
+- `helper.vector_range(min: vector, max: vector): vector` — component-wise \[min, max]
+- `helper.vector_range(min: vector, max: vector, step: vector): vector` — component-wise stepped values
+
+- `helper.buffer(count: number, target?: buffer, offset?: number): buffer`
+  - Fills a buffer with random 32-bit unsigned integers; creates one if not provided.
+
+- `helper.truth(ratio: number): boolean`
+- `helper.pass(ratio: number): boolean`
+  - Returns true with probability `ratio` (e.g. 0.25 → 25% → 1/4).
+
+- `helper.skip(ratio: number): boolean`
+  - Returns false with probability `ratio` (e.g. 0.25 → 25% → 1/4).
+
+- `helper.key_by_weight(weights: { [K]: number }): K`
+  - Returns a key chosen by its weight (weights can be any positive decimal numbers).
+
+- `helper.write_shuffle<T>(mut_arr: { T }): { T }`
   - In-place array shuffle. Returns the same array for convenience.
 
-- `rng.value<T>(arr: { T }): T`
+- `helper.value<T>(arr: { T }): T`
   - Random element from an array.
 
-- `rng.key<K>(arr: { [K]: _ }): K`
+- `helper.key<K>(arr: { [K]: _ }): K`
   - Random key from an table.
-
-- `rng.buffer(count: number, target?: buffer, offset?: number): buffer`
-  - Fills a buffer with random 32-bit unsigned integers; creates one if not provided.
 
 ## Notes
 
