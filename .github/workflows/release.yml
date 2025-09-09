@@ -20,9 +20,10 @@ jobs:
         with:
           token: ${{ github.token }}
 
-      - run: wally login --token $env:WALLY_TOKEN
+      - run: wally login --token "$WALLY_TOKEN"
         env:
           WALLY_TOKEN: ${{ secrets.WALLY_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
 
       - name: Publish wally
         run: wally publish
@@ -42,6 +43,10 @@ jobs:
         uses: axiom-co/setup-pesde@b690699ace34169731b6b2a1c93b2008472038a7
         with:
           token: ${{ github.token }}
+
+      - run: pesde auth login --token "$PESDE_AUTH"
+        env:
+          PESDE_AUTH: ${{ secrets.PESDE_AUTH }}
 
       - name: Publish pesde
         run: pesde publish -y
