@@ -87,6 +87,7 @@ local function generator(seed: hash.seed?, salt: buffer?)
 		return math.ldexp(r, -32) % 1
 	end
 
+	refill_block()
 	return helper(next)
 end
 
