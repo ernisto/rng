@@ -1,5 +1,5 @@
 name = "ernisto/rng"
-version = "0.3.0-alpha"
+version = "1.0.0-rc.1"
 description = "a rng utility"
 authors = ["ernisto <joaovitordesouza707@gmail.com>"]
 repository = "https://github.com/ernisto/rng"
@@ -25,6 +25,3 @@ default = "https://github.com/pesde-pkg/index"
 
 [wally_indices]
 default = "https://github.com/UpliftGames/wally-index"
-
-[dependencies]
-rng = { name = "ernisto/rng", version = "^0.3.0-alpha" }
