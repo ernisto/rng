@@ -39,7 +39,7 @@ jobs:
 
       - name: Lint
         run: >
-          luau_lsp analyze
+          luau-lsp analyze
           --base-luaurc .luaurc
           --ignore **/luau_packages/**
           lib tests
