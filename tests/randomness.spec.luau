@@ -9,7 +9,7 @@ function run.uniform_frequency()
 	local sum = 0
 	for i = 1, N do
 		local r = rng()
-		assert(r >= 0 and r <= 1, `Out of range [0, 1]`)
+		assert(r > 0 and r <= 1, `Out of range [0, 1]`)
 		sum = sum + r
 	end
 	local mean = sum / N

@@ -10,7 +10,7 @@ type u32 = number
 -- functions
 local function xxhash(buff: buffer, h: u32): u32
 	h += PRIME32_5
-	for offset = 0, buffer.len(buff) - 4, 4 do
+	for offset = 0, buffer.len(buff) - 4 do
 		h += PRIME32_1 * buffer.readu32(buff, offset)
 		h = bit32.bxor(h, bit32.rshift(h, 17))
 		h *= PRIME32_4
@@ -28,12 +28,7 @@ end
 -- module
 export type seed = number | string | buffer
 local function hash_to_u32(seed: seed?, count: number): ...u32
-	local buff = buffer.fromstring(
-		if type(seed) == 'string'
-			then seed
-			elseif seed then tostring(seed)
-			else tostring(bit32.lrotate(os.clock() + 1e9, 16))
-	)
+	local buff = buffer.fromstring(if type(seed) == 'string' then seed else tostring(seed))
 	local last = 0
 	local u32s = {}
 	for i = 1, count do

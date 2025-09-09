@@ -55,13 +55,14 @@ local function generator(seed: hash.seed?, salt: buffer?)
 	state[1], state[2], state[3], state[4] = unpack(bytes_to_u32(string.byte('expand 32-byte k', 0, 16)))
 
 	-- key: 32 bytes
-	state[5], state[6], state[7], state[8], state[9], state[10], state[11], state[12] = hash(seed, 8)
-	state[13] = 0 -- counter: 4 bytes
+	state[5], state[6], state[7], state[8], state[9], state[10], state[11], state[12] =
+		hash(seed or bit32.lrotate(os.clock() + 1e9, 16), 8)
+
+	-- counter: 4 bytes
+	state[13] = 0
 
 	-- nonce: 12 bytes
-	for i = 1, 3 do
-		state[13 + i] = salt and buffer.readu32(salt, (i - 1) * 4) or math.random() * U32_CAP
-	end
+	state[14], state[15], state[16] = hash(salt or math.random() * U32_CAP, 3)
 
 	-- gen
 	local block = table.create(16, 0)

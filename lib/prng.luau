@@ -21,7 +21,7 @@ end
 
 -- module
 local function generator(seed: hash.seed?)
-	local s0, s1, s2, s3 = hash(seed, 4)
+	local s0, s1, s2, s3 = hash(seed or bit32.lrotate(os.clock() + 1e9, 16), 4)
 	local r = 0
 
 	local function generate(): ratio
