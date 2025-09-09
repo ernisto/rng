@@ -51,6 +51,11 @@ jobs:
       - name: Checkout git files
         uses: actions/checkout@v2
 
+      - name: Setup rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+        with:
+          token: ${{ github.token }}
+
       - name: Release rbxm
         env:
           GH_TOKEN: ${{ github.token }}
