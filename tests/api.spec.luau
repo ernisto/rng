@@ -74,17 +74,26 @@ function run.should_return_key_with_lowest_weight()
 end
 
 -- deterministic()
-function run.should_return_same_distribution()
-	local dist = rng.same_iter_order({ a = 2, b = 3 })
+function run.should_keep_same_iter_order()
+	local iter_order1 = {}
+	for key in rng.same_iter_order { a = 2, b = 3 } do
+		table.insert(iter_order1, key)
 	end
-	assert(iter_order[1] == 'a')
-	assert(iter_order[2] == 'b')
+	assert(iter_order1[1] == 'a')
+	assert(iter_order1[2] == 'b')
+
+	local iter_order2 = {}
+	for key in rng.same_iter_order { aaaa = 2, bbbb = 3 } do
+		table.insert(iter_order2, key)
+	end
+	assert(iter_order2[1] == 'aaaa')
+	assert(iter_order2[2] == 'bbbb')
 end
 
 -- key_by_weight()
 function run.should_return_key_from_weighted_table()
 	for i = 1, N do
-		local k = rng.key_by_weight({ a = 100, b = 0 })
+		local k = rng.key_by_weight { a = 100, b = 0 }
 		assert(k == 'a')
 	end
 end
@@ -103,7 +112,7 @@ end
 -- value()
 function run.should_return_value_from_array()
 	for i = 1, N do
-		local v = rng.value({ 'x', 'y', 'z' })
+		local v = rng.value { 'x', 'y', 'z' }
 		assert(v == 'x' or v == 'y' or v == 'z')
 	end
 end
@@ -111,7 +120,7 @@ end
 -- key()
 function run.should_return_key_from_map()
 	for i = 1, N do
-		local k = rng.key({ a = 1, b = 2 })
+		local k = rng.key { a = 1, b = 2 }
 		assert(k == 'a' or k == 'b')
 	end
 end
