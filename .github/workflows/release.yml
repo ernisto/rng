@@ -65,9 +65,11 @@ jobs:
         with:
           token: ${{ github.token }}
 
-      - name: Release rbxm
+      - name: Build rbxm
+        run: rojo build default.project.json -o rng.rbxm
+
+      - name: Upload rbxm
+        if: ${{github.event.release.tag_name}}
+        run: gh release upload ${{github.event.release.tag_name}} rng.rbxm
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          rojo build default.project.json -o rng.rbxm
-          gh release upload ${{github.event.release.tag_name}} rng.rbxm
