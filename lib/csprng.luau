@@ -80,7 +80,11 @@ local function generator(seed: hash.seed?, salt: buffer?)
 	local function next(): ratio
 		if cursor >= 16 then refill_block() end
 		cursor += 1
-		return math.ldexp(block[cursor], -32) % 1
+
+		local r = block[cursor]
+		assert(r ~= 0, `invalid result, possibly by a bad seed, states: {table.concat(state, ',')}`)
+
+		return math.ldexp(r, -32) % 1
 	end
 
 	return helper(next)

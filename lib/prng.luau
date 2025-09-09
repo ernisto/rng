@@ -26,6 +26,7 @@ local function generator(seed: hash.seed?)
 
 	local function generate(): ratio
 		s0, s1, s2, s3, r = xoroshiro(s0, s1, s2, s3)
+		assert(r ~= 0, `invalid result, possibly by a bad seed, states: {s0} {s1} {s2} {s3}`)
 		return math.ldexp(r, -32)
 	end
 	return helper(generate)
