@@ -82,9 +82,9 @@ local function generator(seed: hash.seed?, salt: buffer?)
 		cursor += 1
 
 		local r = block[cursor]
-		assert(r ~= 0, `invalid result, possibly by a bad seed, states: {table.concat(state, ',')}`)
-
-		return math.ldexp(r, -32) % 1
+		return if r == 0
+			then error(`invalid result, possibly by a bad seed, states: {table.concat(state, ',')}`)
+			else math.ldexp(r, -32) % 1
 	end
 
 	refill_block()
