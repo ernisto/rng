@@ -5,7 +5,12 @@ local PRIME32_3 = 0xC2B2AE3D
 local PRIME32_4 = 0x27D4EB2F
 local PRIME32_5 = 0x165667B1
 
+local U32_CAP = 2 ^ 32
 type u32 = number
+
+local function multiply_u32(x: u32, m: u32): u32
+	return x % U32_CAP * m % U32_CAP
+end
 
 -- functions
 local function xxhash(buff: buffer, h: u32): u32
@@ -13,13 +18,13 @@ local function xxhash(buff: buffer, h: u32): u32
 	for offset = 0, buffer.len(buff) - 4 do
 		h += PRIME32_1 * buffer.readu32(buff, offset)
 		h = bit32.bxor(h, bit32.rshift(h, 17))
-		h *= PRIME32_4
+		h = multiply_u32(h, PRIME32_4)
 	end
 
 	h = bit32.bxor(h, bit32.rshift(h, 15))
-	h *= PRIME32_2
+	h = multiply_u32(h, PRIME32_2)
 	h = bit32.bxor(h, bit32.rshift(h, 13))
-	h *= PRIME32_3
+	h = multiply_u32(h, PRIME32_3)
 	h = bit32.bxor(h, bit32.rshift(h, 16))
 
 	return h
