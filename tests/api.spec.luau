@@ -75,10 +75,7 @@ end
 
 -- deterministic()
 function run.should_return_same_distribution()
-	local dist = rng.deterministic({ a = 2, b = 3 })
-	local iter_order = {}
-	for key in dist do
-		table.insert(iter_order, key)
+	local dist = rng.same_iter_order({ a = 2, b = 3 })
 	end
 	assert(iter_order[1] == 'a')
 	assert(iter_order[2] == 'b')

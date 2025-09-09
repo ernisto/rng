@@ -25,7 +25,7 @@ local function rarest_keys<K>(key_weights: { [K]: weight }): { K }
 	end
 	return rarest_keys
 end
-local function deterministic_iter_order<K>(key_weights: { [K]: weight }): { [K]: weight }
+local function same_iter_order<K>(key_weights: { [K]: weight }): { [K]: weight }
 	local ordered_keys = rarest_keys(key_weights)
 
 	local function iter(): () -> (K?, weight?)
@@ -48,7 +48,7 @@ return table.freeze {
 	custom = helper,
 	new = prng,
 
-	deterministic_iter_order = deterministic_iter_order,
+	same_iter_order = same_iter_order,
 	rarest_keys = rarest_keys,
 
 	-- primitive
