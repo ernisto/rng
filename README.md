@@ -4,6 +4,8 @@ Simple, fast RNG utilities for Luau: numbers, booleans by probability, weighted 
 
 ## Installation
 
+- Download (`rng.rbxm`) from [latest release](https://github.com/ernisto/rng/releases/download/v1.0.0-rc.1/rng.rbxm)
+
 - Wally (`wally.toml`): add under `[dependencies]`
 ```toml
 rng = "ernisto/rng@0.3.0-rc.1"
@@ -31,18 +33,18 @@ local rng = require('@pkg/rng')
 local function teleport(humanoid: Humanoid, cframe: CFrame)
   humanoid.RootPart.CFrame = cframe * CFrame.new(rng.vector(10, 0, 10))
 end
+```
 
 ```lua
-local skill_weights = {
-  fire = 5,
-  water = 5,
-  earth = 5,
-  lava = 3,
-  light = 1,
-  dark = 1,
-}
 local function spin_skill()
-  return rng.key_from_weight(skill_weights)
+  return rng.key_from_weight {
+    fire = 5,
+    water = 5,
+    earth = 5,
+    lava = 3,
+    light = 1,
+    dark = 1,
+  }
 end
 ```
 
@@ -50,18 +52,18 @@ end
 ```lua
 local RESET_INTERVAL = 1*24*60*60
 
--- rng.deterministic_iter_order to keep iteration order the same for all servers
-local items = rng.deterministic_iter_order {
-    -- total weight  → 150 → (75 + 50 + 20 + 4 + 1)
-    apple = 75,  -- 75/150 → 50.0%
-    soup = 50,   -- 50/150 → 33.3%
-    sword = 20,  -- 20/150 → 13.3%
-    armor = 4,   --  4/150 →  2.6%
-    totem = 1,   --  1/150 →  0.6%
+-- rng.same_iter_order to keep iteration order the same for all servers
+local possible_items = rng.same_iter_order {
+  -- total weight  → 150 → (75 + 50 + 20 + 4 + 1)
+  apple = 75,  -- 75/150 → 50.0%
+  soup = 50,   -- 50/150 → 33.3%
+  sword = 20,  -- 20/150 → 13.3%
+  armor = 4,   --  4/150 →  2.6%
+  totem = 1,   --  1/150 →  0.6%
 }
 
 -- csprng are extremely hard to predict seeing outputs or brute forcing
-local csprng = rng.new_secure(HttpService:GetSecret("MarketRandomSeed"))
+local csprng = rng.new_secure("possibly known seed", HttpService:GetSecret("Salt"))
 
 -- advance state as the same as another living servers
 for i = 0, os.time() - RESET_INTERVAL, RESET_INTERVAL do
@@ -70,11 +72,11 @@ end
 
 -- generate current market
 while true do
-  local items = {}
+  local choosen_items = {}
   for i = 1, 3 do
-    items[i] = csprng.key_by_weight(items)
+    choosen_items[i] = csprng.key_by_weight(possible_items)
   end
-  market.set_items(items)
+  market.set_items(choosen_items)
   task.wait(os.time() % RESET_INTERVAL)
 end
 ```
@@ -91,7 +93,7 @@ local s = rng.range(0, 1, 0.25)        -- one of {0.00, 0.25, 0.50, 0.75, 1.00}
 ### Booleans by probability
 ```lua
 if rng.truth(0.2) then
-    print("1/5 = 20% chance")
+  print("1/5 = 20% chance")
 end
 
 if rng.skip(1/3) then return end  -- 2/3 chance to return
