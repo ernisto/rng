@@ -8,12 +8,17 @@ Simple, fast RNG utilities for Luau: numbers, booleans by probability, weighted 
 
 - Wally (`wally.toml`): add under `[dependencies]`
 ```toml
-rng = "ernisto/rng@1.0.0-rc.2"
+rng = "ernisto/rng@1.0.0-rc.3"
 ```
 
-- Pesde (terminal):
+- Pesde in roblox (terminal):
 ```sh
-pesde add ernisto/rng --target luau
+pesde add wally#ernisto/rng
+```
+
+- Pesde in luau (terminal):
+```sh
+pesde add ernisto/rng
 ```
 
 ## Quick start
