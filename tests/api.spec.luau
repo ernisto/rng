@@ -14,19 +14,33 @@ function run.should_return_number_in_range()
 end
 
 function run.should_return_number_with_step()
+	local outputs = {}
 	for i = 1, N do
 		local n = rng.range(0, 10, 2)
 		assert(n % 2 == 0)
+		table.insert(outputs, n)
+	end
+	for n = 0, 10, 2 do
+		assert(table.find(outputs, n))
 	end
 end
 
 -- vect()
 function run.should_return_vector_in_range()
+	local outputs = table.create(N)
 	for i = 1, N do
-		local v = rng.vector_range(vector.create(0, 0, 0), vector.create(5, 5, 5))
+		local v = rng.vector_range(vector.create(0, 0, 0), vector.create(5, 5, 5), vector.one)
 		assert(0 <= v.x and v.x <= 5)
 		assert(0 <= v.y and v.y <= 5)
 		assert(0 <= v.z and v.z <= 5)
+		table.insert(outputs, v)
+	end
+	for x = 0, 5 do
+		for y = 0, 5 do
+			for z = 0, 5 do
+				assert(table.find(outputs, vector.create(x, y, z)))
+			end
+		end
 	end
 end
 
@@ -49,28 +63,32 @@ end
 
 -- truth()
 function run.should_return_boolean()
+	local outputs = table.create(N)
 	for i = 1, N do
 		local b = rng.truth(0.5)
-		assert(type(b) == 'boolean')
+		table.insert(outputs, b)
 	end
+	assert(table.find(outputs, true))
+	assert(table.find(outputs, false))
 end
 
 -- skip()
 function run.should_return_boolean_skip()
+	local outputs = table.create(N)
 	for i = 1, N do
 		local b = rng.skip(0.5)
-		assert(type(b) == 'boolean')
+		table.insert(outputs, b)
 	end
+	assert(table.find(outputs, true))
+	assert(table.find(outputs, false))
 end
 
 -- rarest_keys()
 function run.should_return_key_with_lowest_weight()
-	for i = 1, N do
-		local keys = rng.rarest_keys({ a = 1, b = 10, c = 1 })
-		assert(table.find(keys, 'a') <= 2)
-		assert(table.find(keys, 'c') <= 2)
-		assert(table.find(keys, 'b') == 3)
-	end
+	local keys = rng.rarest_keys({ a = 1, b = 10, c = 1, d = 5 })
+	assert((keys[1] == 'a' and keys[2] == 'c') or (keys[1] == 'c' and keys[2] == 'a'))
+	assert(keys[3] == 'd')
+	assert(keys[4] == 'b')
 end
 
 -- deterministic()
@@ -111,18 +129,27 @@ end
 
 -- value()
 function run.should_return_value_from_array()
+	local outputs = table.create(N)
 	for i = 1, N do
 		local v = rng.value { 'x', 'y', 'z' }
 		assert(v == 'x' or v == 'y' or v == 'z')
+		table.insert(outputs, v)
 	end
+	assert(table.find(outputs, 'x'))
+	assert(table.find(outputs, 'y'))
+	assert(table.find(outputs, 'z'))
 end
 
 -- key()
 function run.should_return_key_from_map()
+	local outputs = table.create(N)
 	for i = 1, N do
 		local k = rng.key { a = 1, b = 2 }
 		assert(k == 'a' or k == 'b')
+		table.insert(outputs, k)
 	end
+	assert(table.find(outputs, 'a'))
+	assert(table.find(outputs, 'b'))
 end
 
 return run
