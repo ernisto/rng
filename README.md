@@ -51,6 +51,9 @@ end
 ### Secure daily market
 ```lua
 local RESET_INTERVAL = 1*24*60*60
+local function remaining_time_to_refresh()
+  return RESET_INTERVAL - os.time() % RESET_INTERVAL
+end
 
 -- rng.same_iter_order to keep iteration order the same for all servers
 local possible_items = rng.same_iter_order {
@@ -70,14 +73,14 @@ for i = 0, os.time() - RESET_INTERVAL, RESET_INTERVAL do
   for i = 1, 3 do csprng.number() end
 end
 
--- generate current market
+-- generate market
 while true do
   local choosen_items = {}
-  for i = 1, 3 do
+  for i = 1, 10 do
     choosen_items[i] = csprng.key_by_weight(possible_items)
   end
   market.set_items(choosen_items)
-  task.wait(os.time() % RESET_INTERVAL)
+  task.wait(remaining_time_to_refresh())
 end
 ```
 
@@ -103,7 +106,7 @@ print("1/3 = 33% chance")
 ### Vectors (Luau `vector` 3D type)
 ```lua
 local v1 = rng.vector(100, 50, 100) -- x = [0, 100], y = [0, 50], z = [0, 100]
-local v2 = rng.vector_range(vector.create(-10, 0, -20), vector.create(10, 0, 20), 5)
+local v2 = rng.vector_range(vector.create(-10, 0, -20), vector.create(10, 0, 20), vector.one*5)
 ```
 
 ### Arrays
@@ -143,8 +146,9 @@ rng.buffer(512, out, 128)
 
 - `helper.number(): number` — range \[0, 1]
 - `helper.number(max: number): number` — range \[0, max]
-- `helper.step(max: number, step: number): number` — range \[0, 0 + step, 0 + 2*step, max]
+- `helper.step(max: number, step: number): number` — one of { 0, step, 2*step, .., max }
 - `helper.range(min: number, max: number): number` — range \[min, max]
+- `helper.range(min: number, max: number, step: number): number` — min + one of { 0, step, 2*step, ..., max }
 
 - `helper.int(max: int): int` — range \[0, max]
 - `helper.int_range(min: int, max: int)` — range min + one of { 0, 1, 2, ..., max }
