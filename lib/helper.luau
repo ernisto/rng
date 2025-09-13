@@ -4,10 +4,18 @@ return function(rng: () -> ratio)
 		return if max then rng() * max else rng()
 	end
 	local function number_step(max: number?, step: number?): number
-		return if step then (max :: number) * rng() // step * step elseif max then rng() * max else rng()
+		return if step
+			then math.min(max :: number, (step + max :: number) * rng() // step * step)
+			elseif max then rng() * max
+			else rng()
 	end
 	local function number_range(min: number, max: number, step: number?): number
-		return if step then math.lerp(min, max, rng()) // step * step else math.lerp(min, max, rng())
+		if min > max then
+			min, max = max, min
+		end
+		return if step
+			then math.min(max, math.lerp(min, max + step, rng()) // step * step)
+			else math.lerp(min, max, rng())
 	end
 	local function vect(x: number?, y: number?, z: number?, step: number?): vector
 		return if y
