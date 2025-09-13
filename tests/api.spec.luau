@@ -25,6 +25,19 @@ function run.should_return_number_with_step()
 	end
 end
 
+function run.should_return_number_within_negative_interval()
+	local outputs = {}
+	for i = 1, N do
+		local n = rng.range(-10, -5, 2)
+		assert(-10 <= n and n <= -5, `received {n}`)
+		table.insert(outputs, n)
+	end
+	for n = -10, -5, 2 do
+		assert(table.find(outputs, n))
+	end
+	assert(table.find(outputs, -5))
+end
+
 -- vect()
 function run.should_return_vector_in_range()
 	local outputs = table.create(N)
