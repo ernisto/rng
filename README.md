@@ -145,7 +145,10 @@ rng.buffer(512, out, 128)
 - `helper.number(max: number): number` — range \[0, max]
 - `helper.step(max: number, step: number): number` — range \[0, 0 + step, 0 + 2*step, max]
 - `helper.range(min: number, max: number): number` — range \[min, max]
-- `helper.range(min: number, max: number, step: number): number` — \[min, max] snapped to `step`
+
+- `helper.int(max: int): int` — range \[0, max]
+- `helper.int_range(min: int, max: int)` — range min + one of { 0, 1, 2, ..., max }
+- `helper.int_range(min: int, max: int, step: int)` — range min + one of { 0, step, 2*step, ..., max }
 
 - `helper.vector(): vector` — each component in \[0, 1]
 - `helper.vector(max: number): vector` — each component in \[0, max]

@@ -1,4 +1,6 @@
 type ratio = number -- a number ranging 0.00 to 1.00
+type int = number -- no fractional part
+
 return function(rng: () -> ratio)
 	local function number(max: number?): number
 		return if max then rng() * max else rng()
@@ -17,6 +19,14 @@ return function(rng: () -> ratio)
 			then math.min(max, math.lerp(min, max + step, rng()) // step * step)
 			else math.lerp(min, max, rng())
 	end
+
+	local function int(max: int): int
+		return number_step(max, 1)
+	end
+	local function int_range(min: int, max: int, step: int?): int
+		return number_range(min // 1, max // 1, (step or 1) // 1)
+	end
+
 	local function vect(x: number?, y: number?, z: number?, step: number?): vector
 		return if y
 			then vector.create(number_step(x, step), number_step(y, step), z and number_step(z, step) or 0)
@@ -78,13 +88,13 @@ return function(rng: () -> ratio)
 	end
 	local function write_shuffle<T>(mut_arr: { T }): { T }
 		for index, value in mut_arr do
-			local index2 = number_range(1, #mut_arr) // 1
+			local index2 = int_range(1, #mut_arr)
 			mut_arr[index], mut_arr[index2] = mut_arr[index2], mut_arr[index]
 		end
 		return mut_arr
 	end
 	local function value<T>(arr: { T }): T
-		return arr[number_range(1, #arr) // 1]
+		return arr[int_range(1, #arr)]
 	end
 	local function key<K, V>(map: { [K]: V }): K
 		local keys = {}
@@ -99,9 +109,14 @@ return function(rng: () -> ratio)
 		number = number,
 		step = number_step,
 		range = number_range,
+
+		int_range = int_range,
+		int = int,
+
 		vector = vect :: ((max: number?) -> vector) & (x: number, y: number, z: number?, step: number?) -> vector,
 		vector_range = vect_range,
 		direction = direction,
+
 		buffer = buff,
 		truth = truth,
 		pass = truth,
