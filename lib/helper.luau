@@ -22,7 +22,7 @@ return function(rng: () -> ratio)
 		)
 	end
 
-	local function direction(): vector -- TODO: (reference: vector, max_dot: vector)
+	local function direction(): vector -- TODO: (reference: vector, max_dot: number, step_dot: number)
 		local phi = number(math.pi * 2)
 		local costheta = number_range(-1, 1)
 		local theta = math.acos(costheta)
