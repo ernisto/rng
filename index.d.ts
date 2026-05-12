@@ -3,15 +3,12 @@ declare namespace rng {
 	type seed = number | string | buffer;
 	type weight_map<K extends string = string> = Record<K, weight>;
 
-	interface helper {
+	interface shared_helper {
 		number(this: void): number;
 		number(this: void, max: number): number;
 
 		step(this: void, max: number, step?: number): number;
 		range(this: void, min: number, max: number, step?: number): number;
-
-		int(this: void, max: number): number;
-		int_range(this: void, min: number, max: number, step?: number): number;
 
 		vector(this: void): vector;
 		vector(this: void, max: number): vector;
@@ -30,30 +27,18 @@ declare namespace rng {
 		key<T extends object>(this: void, map: T): keyof T;
 	}
 
-	interface api {
+	interface helper extends shared_helper {
+		int(this: void, max: number): number;
+		int_range(this: void, min: number, max: number, step?: number): number;
+	}
+
+	interface api extends shared_helper {
 		new_secure: (this: void, seed?: seed, salt?: buffer) => helper;
 		custom: (this: void, generator: () => number) => helper;
 		new: (this: void, seed?: seed) => helper;
 
 		same_iter_order<K extends string>(this: void, key_weights: weight_map<K>): weight_map<K>;
 		rarest_keys<K extends string>(this: void, key_weights: weight_map<K>): K[];
-
-		vector_range: helper["vector_range"];
-		direction: helper["direction"];
-		vector: helper["vector"];
-		number: helper["number"];
-		range: helper["range"];
-		step: helper["step"];
-
-		buffer: helper["buffer"];
-		truth: helper["truth"];
-		pass: helper["pass"];
-		skip: helper["skip"];
-
-		write_shuffle: helper["write_shuffle"];
-		key_by_weight: helper["key_by_weight"];
-		value: helper["value"];
-		key: helper["key"];
 	}
 }
 
