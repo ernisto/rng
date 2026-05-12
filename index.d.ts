@@ -1,7 +1,7 @@
 declare namespace rng {
 	type weight = number;
 	type seed = number | string | buffer;
-	type weight_map<K extends string = string> = Record<K, weight>;
+	type weight_map<K = unknown> = ReadonlyMap<K, weight>;
 
 	interface shared_helper {
 		number(this: void): number;
@@ -22,7 +22,7 @@ declare namespace rng {
 		skip(this: void, chance: number): boolean;
 
 		write_shuffle<T>(this: void, mut_arr: T[]): T[];
-		key_by_weight<K extends string>(this: void, key_weights: weight_map<K>): K;
+		key_by_weight<K>(this: void, key_weights: weight_map<K>): K;
 		value<T>(this: void, arr: ReadonlyArray<T>): T;
 		key<T extends object>(this: void, map: T): keyof T;
 	}
@@ -37,8 +37,8 @@ declare namespace rng {
 		custom: (this: void, generator: () => number) => helper;
 		new: (this: void, seed?: seed) => helper;
 
-		same_iter_order<K extends string>(this: void, key_weights: weight_map<K>): weight_map<K>;
-		rarest_keys<K extends string>(this: void, key_weights: weight_map<K>): K[];
+		same_iter_order<K>(this: void, key_weights: weight_map<K>): weight_map<K>;
+		rarest_keys<K>(this: void, key_weights: weight_map<K>): K[];
 	}
 }
 
