@@ -1,0 +1,27 @@
+{
+	"name": "@ernisto/rng",
+	"version": "1.0.0-rc.3",
+	"description": "rbxts typings for ernisto/rng",
+	"main": "lib/init.luau",
+	"typings": "index.d.ts",
+	"publishConfig": {
+		"access": "public"
+	},
+	"files": [
+		"lib",
+		"index.d.ts",
+		"README.md",
+		"LICENSE"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ernisto/rng.git"
+	},
+	"keywords": [
+		"roblox",
+		"rbxts",
+		"luau",
+		"rng"
+	],
+	"license": "MIT"
+}
