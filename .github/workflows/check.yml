@@ -16,9 +16,7 @@ jobs:
   check-format:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your Git repo
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v6
       - name: Check Format
         uses: JohnnyMorganz/stylua-action@v4
         with:
@@ -29,8 +27,7 @@ jobs:
   lint-code:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your git repo
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Setup rokit
         uses: CompeyDev/setup-rokit@v0.1.2
@@ -47,8 +44,7 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your Git repo
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Setup Pesde Tools
         uses: axiom-co/setup-pesde@b690699ace34169731b6b2a1c93b2008472038a7
