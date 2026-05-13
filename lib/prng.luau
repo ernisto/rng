@@ -1,5 +1,5 @@
-local hash = require('./hash')
-local helper = require('./helper')
+local hash = require './hash'
+local helper = require './helper'
 local U32_CAP = 2 ^ 32
 type u32 = number
 

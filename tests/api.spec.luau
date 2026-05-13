@@ -1,6 +1,6 @@
 -- run tests on terminal `pesde x ernisto/test`
 
-local rng = require('../lib')
+local rng = require '../lib'
 local run = {}
 
 local N = 2 ^ 16
@@ -98,7 +98,7 @@ end
 
 -- rarest_keys()
 function run.should_return_key_with_lowest_weight()
-	local keys = rng.rarest_keys({ a = 1, b = 10, c = 1, d = 5 })
+	local keys = rng.rarest_keys { a = 1, b = 10, c = 1, d = 5 }
 	assert((keys[1] == 'a' and keys[2] == 'c') or (keys[1] == 'c' and keys[2] == 'a'))
 	assert(keys[3] == 'd')
 	assert(keys[4] == 'b')

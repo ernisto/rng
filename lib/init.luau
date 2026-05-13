@@ -1,6 +1,6 @@
-local csprng = require('@self/csprng')
-local helper = require('@self/helper')
-local prng = require('@self/prng')
+local csprng = require '@self/csprng'
+local helper = require '@self/helper'
+local prng = require '@self/prng'
 
 -- functions
 export type weight = number

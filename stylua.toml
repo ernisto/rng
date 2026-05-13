@@ -1,4 +1,8 @@
 collapse_simple_statement = 'ConditionalOnly'
-call_parentheses = 'Input'
+call_parentheses = 'None'
 quote_style = 'AutoPreferSingle'
 line_endings = 'Unix'
+syntax = 'Luau'
+
+[sort_requires]
+enabled = true

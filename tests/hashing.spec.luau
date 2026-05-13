@@ -1,4 +1,4 @@
-local hash = require('../lib/hash')
+local hash = require '../lib/hash'
 
 local focus = {}
 local run = {}
