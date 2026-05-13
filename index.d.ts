@@ -3,7 +3,7 @@ declare namespace rng {
 	type seed = number | string | buffer;
 	type weight_map<K = unknown> = ReadonlyMap<K, weight>;
 
-	interface shared_helper {
+	interface helper {
 		number(this: void): number;
 		number(this: void, max: number): number;
 
@@ -27,12 +27,7 @@ declare namespace rng {
 		key<T extends object>(this: void, map: T): keyof T;
 	}
 
-	interface helper extends shared_helper {
-		int(this: void, max: number): number;
-		int_range(this: void, min: number, max: number, step?: number): number;
-	}
-
-	interface api extends shared_helper {
+	interface api extends helper {
 		new_secure: (this: void, seed?: seed, salt?: buffer) => helper;
 		custom: (this: void, generator: () => number) => helper;
 		new: (this: void, seed?: seed) => helper;

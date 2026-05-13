@@ -53,11 +53,13 @@ return table.freeze {
 
 	-- primitive
 	vector_range = std.vector_range,
+	int_range = std.int_range,
 	direction = std.direction,
 	vector = std.vector,
 	number = std.number,
 	range = std.range,
 	step = std.step,
+	int = std.int,
 
 	buffer = std.buffer,
 	truth = std.truth,
