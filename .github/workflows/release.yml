@@ -17,9 +17,7 @@ jobs:
     needs: [check]
     steps:
       - uses: actions/checkout@v6
-
-      - name: Setup rokit
-        uses: CompeyDev/setup-rokit@v0.1.2
+      - uses: CompeyDev/setup-rokit@v0.1.2
         with:
           token: ${{ github.token }}
 
@@ -31,30 +29,30 @@ jobs:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
 
-      - name: Publish npm
-        run: npm publish --access public
+      - run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG=latest
+
+          if [[ "$VERSION" == *"-"* ]]; then
+            TAG=$(echo "$VERSION" | cut -d'-' -f2 | cut -d'.' -f1)
+          fi
+
+          npm publish --access public --tag $TAG
 
   publish_wally:
     runs-on: ubuntu-latest
     needs: [check]
     steps:
       - uses: actions/checkout@v6
-
-      - name: Setup rokit
-        uses: CompeyDev/setup-rokit@v0.1.2
+      - uses: CompeyDev/setup-rokit@v0.1.2
         with:
           token: ${{ github.token }}
 
       - name: Sync version
         run: lute run scripts/bump_version
 
-      - run: wally login --token "$WALLY_TOKEN"
-        env:
-          WALLY_TOKEN: ${{ secrets.WALLY_TOKEN }}
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Publish wally
-        run: wally publish
+      - run: wally login --token "${{ secrets.WALLY_TOKEN }}"
+      - run: wally publish
 
   publish_pesde:
     runs-on: ubuntu-latest
@@ -65,26 +63,19 @@ jobs:
       issues: write
     steps:
       - uses: actions/checkout@v6
-
-      - name: Setup rokit
-        uses: CompeyDev/setup-rokit@v0.1.2
+      - uses: CompeyDev/setup-rokit@v0.1.2
         with:
           token: ${{ github.token }}
 
       - name: Sync version
         run: lute run scripts/bump_version
 
-      - name: Setup pesde
-        uses: axiom-co/setup-pesde@b690699ace34169731b6b2a1c93b2008472038a7
+      - uses: axiom-co/setup-pesde@b690699ace34169731b6b2a1c93b2008472038a7
         with:
           token: ${{ github.token }}
 
-      - run: pesde auth login --token "$PESDE_AUTH"
-        env:
-          PESDE_AUTH: ${{ secrets.PESDE_AUTH }}
-
-      - name: Publish pesde
-        run: pesde publish -y
+      - run: pesde auth login --token "${{ secrets.PESDE_AUTH }}"
+      - run: pesde publish -y
 
   release_file:
     runs-on: ubuntu-latest
@@ -93,9 +84,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v6
-
-      - name: Setup rokit
-        uses: CompeyDev/setup-rokit@v0.1.2
+      - uses: CompeyDev/setup-rokit@v0.1.2
         with:
           token: ${{ github.token }}
 

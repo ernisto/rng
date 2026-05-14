@@ -17,8 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Check Format
-        uses: JohnnyMorganz/stylua-action@v4
+      - uses: JohnnyMorganz/stylua-action@v4
         with:
           token: ${{ github.token }}
           version: 2.1.0
@@ -28,9 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
-      - name: Setup rokit
-        uses: CompeyDev/setup-rokit@v0.1.2
+      - uses: CompeyDev/setup-rokit@v0.1.2
         with:
           token: ${{ github.token }}
 
@@ -45,9 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
-      - name: Setup Pesde Tools
-        uses: axiom-co/setup-pesde@b690699ace34169731b6b2a1c93b2008472038a7
+      - uses: axiom-co/setup-pesde@b690699ace34169731b6b2a1c93b2008472038a7
 
       - name: Run tests
         run: pesde x ernisto/test
