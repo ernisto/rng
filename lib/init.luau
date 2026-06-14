@@ -43,6 +43,8 @@ end
 
 -- module
 local std = helper(math.random)
+export type generator = typeof(std)
+
 return table.freeze {
 	new_secure = csprng,
 	custom = helper,
