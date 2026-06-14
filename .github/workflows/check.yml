@@ -29,6 +29,9 @@ jobs:
         with:
           token: ${{ github.token }}
 
+      - name: Generate lute typedefs
+        run: lute setup
+
       - name: Lint
         run: >
           luau-lsp analyze
@@ -41,8 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: axiom-co/setup-pesde@b690699ace34169731b6b2a1c93b2008472038a7
-      - run: pesde install
+      - uses: CompeyDev/setup-rokit@v0.1.2
+        with:
+          token: ${{ github.token }}
 
       - name: Run tests
-        run: pesde x ernisto/test
+        run: lute test

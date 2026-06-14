@@ -1,23 +1,23 @@
--- run tests on terminal `pesde x ernisto/test`
+-- run tests on terminal `lute test`
 
 local lib = require '../lib'
+local test = require '@std/test'
 
-local run = {}
 local N = 2 ^ 20
 
 local function define(prefix: string, rng: () -> number)
-	run[`{prefix}_uniform_frequency`] = function()
+	test.case(`{prefix} uniform frequency`, function(t)
 		local sum = 0
 		for i = 1, N do
 			local r = rng()
-			assert(r > 0 and r <= 1, `Out of range [0, 1]`)
+			t.that(r > 0 and r <= 1, `Out of range [0, 1]: {r}`)
 			sum = sum + r
 		end
 		local mean = sum / N
-		assert(mean > 0.49 and mean < 0.51, `Expected mean of ~0.5 (0.01 threshold), got {mean}`)
-	end
+		t.that(mean > 0.49 and mean < 0.51, `Expected mean of ~0.5 (0.01 threshold), got {mean}`)
+	end)
 
-	run[`{prefix}_no_absurd_sequences`] = function()
+	test.case(`{prefix} no absurd_sequences`, function(t)
 		local last = rng()
 		local absurd_sequence_length = math.log(N, 2) * 5
 		local current_sequence = 1
@@ -32,10 +32,10 @@ local function define(prefix: string, rng: () -> number)
 			end
 			last = r
 		end
-		assert(higher_sequence_length < absurd_sequence_length, `Got so high sequence of 1/2: {higher_sequence_length}`)
-	end
+		t.that(higher_sequence_length < absurd_sequence_length, `Got so high sequence of 1/2: {higher_sequence_length}`)
+	end)
 
-	run[`{prefix}_low_auto_correlation`] = function()
+	test.case(`{prefix} low auto correlation`, function(t)
 		local seq = {}
 		for i = 1, N do
 			seq[i] = rng()
@@ -46,19 +46,18 @@ local function define(prefix: string, rng: () -> number)
 			norm += (seq[i] - 0.5) ^ 2
 		end
 		local corr = dot / norm
-		assert(math.abs(corr) < 0.05, `High correlation: {corr}`)
-	end
-	run[`{prefix}_distinct_seeds_diverge`] = function()
+		t.that(math.abs(corr) < 0.05, `High correlation: {corr}`)
+	end)
+
+	test.case(`{prefix} distinct seeds diverge`, function(t)
 		local r1 = lib.new(1)
 		local r2 = lib.new(2)
 
 		for i = 1, 1000000 do
-			assert(r1.number() ~= r2.number())
+			t.neq(r1.number(), r2.number())
 		end
-	end
+	end)
 end
 
 define('secure_new', lib.new_secure().number)
 define('new', lib.new().number)
-
-return run
