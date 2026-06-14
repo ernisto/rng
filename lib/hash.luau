@@ -9,16 +9,31 @@ local U32_CAP = 2 ^ 32
 type u32 = number
 
 local function multiply_u32(x: u32, m: u32): u32
-	return x % U32_CAP * m % U32_CAP
+	-- split 32x32 mult so intermediates stay below 2^53 (no float precision loss)
+	x %= U32_CAP
+	m %= U32_CAP
+	local lo = x % 0x10000 * m
+	local hi = x // 0x10000 * m % 0x10000 * 0x10000
+	return (lo + hi) % U32_CAP
 end
 
 -- functions
 local function xxhash(buff: buffer, h: u32): u32
+	local len = buffer.len(buff)
 	h += PRIME32_5
-	for offset = 0, buffer.len(buff) - 4 do
-		h += PRIME32_1 * buffer.readu32(buff, offset)
-		h = bit32.bxor(h, bit32.rshift(h, 17))
-		h = multiply_u32(h, PRIME32_4)
+	if len >= 4 then
+		for offset = 0, len - 4 do
+			h += multiply_u32(buffer.readu32(buff, offset), PRIME32_1)
+			h = bit32.bxor(h, bit32.rshift(h, 17))
+			h = multiply_u32(h, PRIME32_4)
+		end
+	else
+		-- inputs < 4 bytes can't be read as u32; mix per-byte so content matters
+		for offset = 0, len - 1 do
+			h += multiply_u32(buffer.readu8(buff, offset), PRIME32_5)
+			h = bit32.lrotate(h, 11)
+			h = multiply_u32(h, PRIME32_1)
+		end
 	end
 
 	h = bit32.bxor(h, bit32.rshift(h, 15))
