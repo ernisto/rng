@@ -38,6 +38,7 @@ jobs:
           --platform standard
           --base-luaurc .luaurc
           --ignore **/*_packages/**
+          --ignore **/.lute/**
           lib tests
 
   unit-tests:
